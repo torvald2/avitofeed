@@ -2,10 +2,11 @@
   div
     b-card
       b-tabs(pills card)
-        b-tab(v-for="(platform, index) in platforms" :key="index")
+        b-tab(v-for="(platform, index) in platforms" :key="'admin-tab'+index"  )
           template(#title)
             span {{platform.Name}}  
           h3 {{platform.Name}}
+          HierTab(:hier="getCurrentPlatformHier(platform.id)" :platform="platform.id")
         b-tab(@click="addNew")
           template(#title)
             span Добавить  
@@ -19,35 +20,48 @@
 
 <script>
 import { mapState, mapMutations,mapActions } from "vuex"
+
 import {NewPlatform} from "../services/api"
+import HierTab from "../components/HierTab.vue"
 export default {
   name: "Admin",
+  components:{
+    HierTab
+  },
 
   data(){
     return{
-      nameInput: ""
+      nameInput: "",
+      
     }
   },
   computed: {
-    ...mapState(["platforms"])
+    ...mapState(["platforms","hier"]),
+   
   },
   methods: {
     ...mapMutations(["AppendPlatform"]),
-    ...mapActions(["getPlatforms"]),
+    ...mapActions(["getPlatforms","getHier"]),
     addNew() {
       this.$refs["platform_input_modal"].show()
 
     },
+    getCurrentPlatformHier(platform){
+      return this.hier.filter(x => x.Platform === platform)
+    }
+    ,
     async save() {
       const res = await NewPlatform({ Name: this.nameInput });
       this.AppendPlatform(res)
       this.$refs["platform_input_modal"].close()
 
 
-    }
+    },
+
   },
   created(){
     this.getPlatforms()
+    this.getHier()
 
   }
 

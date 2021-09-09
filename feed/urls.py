@@ -7,6 +7,7 @@ from feed import views
 
 urlpatterns = [
     path('platforms/', views.PlatformList.as_view()),
+    path("categories/", views.CategoryList.as_view())
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

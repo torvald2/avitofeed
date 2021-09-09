@@ -1,11 +1,38 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import  {GetAllPlatforms} from "../services/api"
+import  {GetAllPlatforms, GetHierarcty} from "../services/api"
 Vue.use(Vuex);
+
+function flatToHierarchy (flat) {
+
+  var roots = [] 
+
+  var all = {}
+
+  flat.forEach(function(item) {
+    all[item.id] = item
+  })
+
+  for (const key in all) {
+    if (!all[key].Parent){
+      roots.push(all[key])
+    } else {
+      if(!all[all[key].Parent].children){
+        all[all[key].Parent].children = []
+
+      }
+      all[all[key].Parent].children.push(all[key])
+      
+    }
+  }
+
+  return roots
+}
 
 export default new Vuex.Store({
   state: {
     platforms: [],
+    hier:[]
   },
   mutations: {
     SetPlatform(state, data) {
@@ -14,11 +41,21 @@ export default new Vuex.Store({
     AppendPlatform(state, data) {
       state.platforms.push(data)
     },
+    SetHier(state, data){
+      state.hier = data
+      
+
+    }
   },
   actions: {
     async getPlatforms(context) {
-      context.commit("SetPlatform", await GetAllPlatforms(context.state.token));
+      context.commit("SetPlatform", await GetAllPlatforms());
     },
+    async getHier(context){
+      const hier = await GetHierarcty()
+
+      context.commit("SetHier", flatToHierarchy(hier));
+    }
   },
   modules: {},
 });

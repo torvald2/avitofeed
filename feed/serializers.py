@@ -8,17 +8,10 @@ class PlatformSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
-
 
 class CategorySerializer(serializers.ModelSerializer):
-    parentCategory = serializers.PrimaryKeyRelatedField(read_only=True)
-    subcategories = SubCategorySerializer(read_only=True)
-    platform = serializers.PrimaryKeyRelatedField(read_only=True)
-
+ 
     class Meta:
         model = Category
-        fields = ('parentCategory',"platform","Name","Description","XML_Value","Table")
+        fields = ("id","Platform","Name","Description","XML_Value","Table","subcategory", "Parent")
+        extra_kwargs = { 'Table': {'required': False},'subcategory': {'required': False}, 'Parent': {'required': False}}

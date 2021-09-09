@@ -12,11 +12,11 @@ class Table(models.Model):
 
 class Category(models.Model):
     Platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
-    Parent = models.ForeignKey("self", on_delete=models.CASCADE)
+    Parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, related_name='subcategory')
     Name = models.TextField(null=False)
     Description = models.TextField()
     XML_Value = models.TextField(null=False)
-    Table = models.ForeignKey(Table, on_delete=models.CASCADE)
+    Table = models.ForeignKey(Table, on_delete=models.CASCADE, null=True)
 
 class Cell(models.Model):
     NUMBER = 1
