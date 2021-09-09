@@ -43,3 +43,16 @@ export async function CreateEmptyCategory(platform) {
   
   return resp.status === 201
 }
+
+
+export async function DeleteCategory(cat_id) {
+  const resp = await fetch(`/api/v1/categories/?id=${cat_id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   
+  });
+  
+  return resp.status === 204
+}

@@ -38,14 +38,14 @@
           )
             b-form-select(id="input-4")
           b-button(type="submit" variant="primary") Сохранить
-          b-button(type="reset" variant="danger") Удалить
+          b-button(type="reset" variant="danger" @click="deleteCat") Удалить
     b-modal(ref="create-hier-error-model" hide-footer title="Ошибка")
       h1 Ошибка создания категории
   
 </template>
 
 <script>
-import { CreateEmptyCategory} from "../services/api"
+import { CreateEmptyCategory,DeleteCategory} from "../services/api"
 import {mapActions} from "vuex"
 export default {
   name: "hiertab",
@@ -74,6 +74,23 @@ export default {
       
 
     },
+    async deleteCat(){
+      this.inProg = true
+      const res = await !DeleteCategory(this.selectedID)
+      if (res){
+        this.inProg = false
+        this.$refs["create-hier-error-model"].show()
+
+      } else {
+        await this.getHier()
+        this.selectedID = false
+
+        this.inProg =false
+
+      }
+      
+    },
+
     async create(){
       this.selectedID = false
       this.inProg = true
@@ -96,9 +113,8 @@ export default {
     parents(){
       let data = []
         for (const el of this.hier){
-          if (el.Parent === this.selected_parent){
             data.push({value: el.id, text: el.Name})
-          }
+          
         }
       return data
       
