@@ -27,7 +27,11 @@ class CategoryList(APIView):
     
     def get(self, request):
         platform = request.query_params.get('platform')
-        cats = Category.objects.filter(Platform=platform)
+        if platform:
+            cats = Category.objects.filter(Platform=platform)
+        else:
+            cats = Category.objects.all()
+        
         serializer = CategorySerializer(cats, many=True)
         return Response(serializer.data)
     

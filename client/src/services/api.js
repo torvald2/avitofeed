@@ -14,8 +14,12 @@ export async function NewPlatform(data) {
   return await resp.json();
 }
 
-export async function GetHierarcty(){
-  const resp = await fetch("/api/v1/categories/?platform=1", {
+export async function GetHierarcty(hier){
+  let  url = `/api/v1/categories/`
+  if (hier){
+     url = `/api/v1/categories/?platform=${hier}`
+  }
+  const resp = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -55,4 +59,22 @@ export async function DeleteCategory(cat_id) {
   });
   
   return resp.status === 204
+}
+
+
+
+export async function UpdateCategory(cat_id, parent, name, desc, XML_Value, table) {
+  const resp = await fetch("/api/v1/categories/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ 
+                          "Platform": platform,
+                           "Name":"Новая категория",
+                           "Description":"Заполни меня ",
+                           "XML_Value":"Cat",
+                        
+    })
+  });
 }

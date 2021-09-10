@@ -17,6 +17,7 @@ class Category(models.Model):
     Description = models.TextField()
     XML_Value = models.TextField(null=False)
     Table = models.ForeignKey(Table, on_delete=models.CASCADE, null=True)
+    Fo = models.TextField()
 
 class Cell(models.Model):
     NUMBER = 1
