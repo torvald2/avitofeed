@@ -9,7 +9,7 @@
               b-button(@click="create"  variant="light")
                 b-icon(icon="folder-plus")
                 span Создать
-              b-tree-view(:data="hier" nodeLabelProp="Name"  :renameNodeOnDblClick="false" :contextMenuItems="[]" @nodeSelect="onSelect" v-if="hier")
+              b-tree-view(:data="hier" nodeLabelProp="Name" :contextMenu="false" :renameNodeOnDblClick="false" :contextMenuItems="[]" @nodeSelect="onSelect" v-if="hier")
       b-col(v-if="selectedID")
         b-form
           b-form-group(
@@ -37,15 +37,23 @@
             label-for="input-4"
           )
             b-form-select(id="input-4")
-          b-button(type="submit" variant="primary") Сохранить
-          b-button(type="reset" variant="danger" @click="deleteCat") Удалить
+          b-button-group
+            b-button( @click="updateCategory" variant="primary")
+              b-icon(icon="check-all").mr-2
+              | Сохранить
+            b-button(variant="danger" @click="deleteCat")
+              b-icon(icon="x-circle-fill").mr-2
+              | Удалить
+            b-button(variant="success" @click="createParent")
+              b-icon(icon="list-nested").mr-2
+              | Добавить дочернюю
     b-modal(ref="create-hier-error-model" hide-footer title="Ошибка")
       h1 Ошибка создания категории
   
 </template>
 
 <script>
-import { CreateEmptyCategory,DeleteCategory} from "../services/api"
+import { CreateEmptyCategory,DeleteCategory, UpdateCategory, CreateEmptyChildCategory} from "../services/api"
 import {mapActions} from "vuex"
 export default {
   name: "hiertab",
@@ -76,8 +84,8 @@ export default {
     },
     async deleteCat(){
       this.inProg = true
-      const res = await !DeleteCategory(this.selectedID)
-      if (res){
+      const res = await DeleteCategory(this.selectedID)
+      if (!res){
         this.inProg = false
         this.$refs["create-hier-error-model"].show()
 
@@ -94,8 +102,8 @@ export default {
     async create(){
       this.selectedID = false
       this.inProg = true
-      const res = await !CreateEmptyCategory(this.platform)
-      if (res){
+      const res = await CreateEmptyCategory(this.platform)
+      if (!res){
         this.inProg = false
 
       this.$refs["create-hier-error-model"].show()
@@ -107,8 +115,48 @@ export default {
 
       }
       
-    }
+    },
+    async updateCategory(){
+      this.inProg = true
+      const res = await UpdateCategory(this.selectedID,
+                                       this.selected_parent,
+                                       this.nameOfSelected,
+                                       this.descOfSelect,
+                                       this.xmlOfSelect,
+                                       null,
+                                       this.platform
+                                       )
+      if (!res){
+        this.inProg = false
+        this.$refs["create-hier-error-model"].show()
+
+      } else {
+        await this.getHier()
+        this.selectedID = false
+
+        this.inProg =false
+
+      }
+
+    },
+    async createParent(){
+      this.inProg = true
+      const res = await CreateEmptyChildCategory(this.platform, this.selectedID)
+      if (!res){
+        this.inProg = false
+
+      this.$refs["create-hier-error-model"].show()
+
+      } else {
+        await this.getHier()
+
+        this.inProg =false
+
+      }
+
   },
+  },
+  
   computed:{
     parents(){
       let data = []

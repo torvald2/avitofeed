@@ -48,6 +48,25 @@ export async function CreateEmptyCategory(platform) {
   return resp.status === 201
 }
 
+export async function CreateEmptyChildCategory(platform, parent) {
+  const resp = await fetch("/api/v1/categories/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ 
+                          "Platform": platform,
+                           "Name":"Новая категория",
+                           "Description":"Заполни меня ",
+                           "XML_Value":"Cat",
+                           "Parent":parent
+                        
+    })
+  });
+  
+  return resp.status === 201
+}
+
 
 export async function DeleteCategory(cat_id) {
   const resp = await fetch(`/api/v1/categories/?id=${cat_id}`, {
@@ -61,20 +80,35 @@ export async function DeleteCategory(cat_id) {
   return resp.status === 204
 }
 
+export async function DeletePlatform(platform_id) {
+  const resp = await fetch(`/api/v1/platforms/?id=${platform_id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+   
+  });
+  
+  return resp.status === 204
+}
 
 
-export async function UpdateCategory(cat_id, parent, name, desc, XML_Value, table) {
-  const resp = await fetch("/api/v1/categories/", {
-    method: "POST",
+
+export async function UpdateCategory(cat_id, parent, name, desc, XML_Value, table, platform) {
+  const resp = await fetch(`/api/v1/categories/?id=${cat_id}`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ 
                           "Platform": platform,
-                           "Name":"Новая категория",
-                           "Description":"Заполни меня ",
-                           "XML_Value":"Cat",
+                           "Name":name,
+                           "Description":desc,
+                           "XML_Value":XML_Value,
+                           "Parent":parent,
+                           "Table":table
                         
     })
   });
+  return resp.status === 200
 }
