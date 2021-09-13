@@ -6,9 +6,14 @@
           template(#title)
             span {{platform.Name}} 
             b-button(size="sm"  variant="link" @click="showDeletePlatfornModal(platform.id)")
-              b-icon(icon="x-octagon-fill" variant="danger") 
+              b-icon(icon="x-octagon-fill" variant="danger")
+          
           h3 {{platform.Name}}
-          HierTab(:hier="getCurrentPlatformHier(platform.id)" :platform="platform.id")
+          b-tabs(pills card)
+            b-tab(title="Категории")
+              HierTab(:hier="getCurrentPlatformHier(platform.id)" :platform="platform.id")
+            b-tab(title="Таблицы")
+              TableTab(:tables="getCurrentPlatformTables(platform.id)" :platform="platform.id")
         b-tab(@click="addNew")
           template(#title)
             span Добавить  
@@ -28,10 +33,12 @@ import { mapState, mapMutations,mapActions } from "vuex"
 
 import {NewPlatform, DeletePlatform} from "../services/api"
 import HierTab from "../components/HierTab.vue"
+import TableTab from "../components/TableTab.vue"
 export default {
   name: "Admin",
   components:{
-    HierTab
+    HierTab,
+    TableTab
   },
 
   data(){
@@ -42,20 +49,22 @@ export default {
     }
   },
   computed: {
-    ...mapState(["platforms","hier"]),
+    ...mapState(["platforms","hier","tables"]),
    
   },
   methods: {
     ...mapMutations(["AppendPlatform"]),
-    ...mapActions(["getPlatforms","getHier"]),
+    ...mapActions(["getPlatforms","getHier","GetTables"]),
     addNew() {
       this.$refs["platform_input_modal"].show()
 
     },
     getCurrentPlatformHier(platform){
       return this.hier.filter(x => x.Platform === platform)
-    }
-    ,
+    },
+    getCurrentPlatformTables(platform){
+      return this.tables.filter(x => x.platform === platform)
+    },
     async save() {
       const res = await NewPlatform({ Name: this.nameInput });
       this.AppendPlatform(res)
@@ -81,6 +90,8 @@ export default {
   created(){
     this.getPlatforms()
     this.getHier()
+    this.GetTables()
+
 
   }
 

@@ -9,6 +9,7 @@ class Platform(models.Model):
 
 class Table(models.Model):
     name = models.TextField(null=False)
+    platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
 
 class Category(models.Model):
     Platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
@@ -17,7 +18,6 @@ class Category(models.Model):
     Description = models.TextField()
     XML_Value = models.TextField(null=False)
     Table = models.ForeignKey(Table, on_delete=models.CASCADE, null=True)
-    Fo = models.TextField()
 
 class Cell(models.Model):
     NUMBER = 1
@@ -39,5 +39,5 @@ class Cell(models.Model):
     dataType = models.IntegerField(choices=FEELD_TYPE_CHOICES)
     values = ArrayField(models.TextField())
     max_len = models.IntegerField()
-    fieldForDisplay = models.ForeignKey("self", on_delete=models.CASCADE)
+    fieldForDisplay = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
     valueForDisplay = models.TextField()

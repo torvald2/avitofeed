@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import  {GetAllPlatforms, GetHierarcty} from "../services/api"
+import  {GetAllPlatforms, GetHierarcty, GetTables} from "../services/api"
 Vue.use(Vuex);
 
 function flatToHierarchy (flat) {
@@ -32,7 +32,8 @@ function flatToHierarchy (flat) {
 export default new Vuex.Store({
   state: {
     platforms: [],
-    hier:[]
+    hier:[],
+    tables:[]
   },
   mutations: {
     SetPlatform(state, data) {
@@ -43,8 +44,9 @@ export default new Vuex.Store({
     },
     SetHier(state, data){
       state.hier = data
-      
-
+    },
+    SetTables(state,data){
+      state.tables = data
     }
   },
   actions: {
@@ -55,6 +57,9 @@ export default new Vuex.Store({
       const hier = await GetHierarcty()
 
       context.commit("SetHier", flatToHierarchy(hier));
+    },
+    async GetTables(context){
+      context.commit("SetTables", await GetTables())
     }
   },
   modules: {},
